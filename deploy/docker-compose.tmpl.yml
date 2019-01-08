@@ -8,7 +8,8 @@ services:
       KSQL_KSQL_SERVICE_ID: ksql-server
       KSQL_BOOTSTRAP_SERVERS: kf-1:${KF_PORT},kf-2:${KF_PORT},kf-3:${KF_PORT}
       KSQL_LISTENERS: http://0.0.0.0:${KSQL_PORT}
-      KSQL_SCHEMA_REGISTRY_URL: http://schema-registry:${SR_PORT}
+      KSQL_KSQL_SCHEMA_REGISTRY_URL: http://schema-registry:${SR_PORT}
+      KSQL_STREAMS_AUTO_OFFSET_RESET: earliest
       KSQL_OPTS: -Xmx512m -Xms256m
     networks:
       kafka-net:
