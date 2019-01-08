@@ -1,0 +1,49 @@
+version: '3.5'
+
+services:
+  ksql-server:
+    image: confluentinc/cp-ksql-server:${IMAGE_TAG:-latest}
+    hostname: ksql-server
+    environment:
+      KSQL_KSQL_SERVICE_ID: ksql-server
+      KSQL_BOOTSTRAP_SERVERS: kf-1:${KF_PORT},kf-2:${KF_PORT},kf-3:${KF_PORT}
+      KSQL_LISTENERS: http://0.0.0.0:${KSQL_PORT}
+      KSQL_SCHEMA_REGISTRY_URL: http://schema-registry:${SR_PORT}
+      KSQL_OPTS: -Xmx512m -Xms256m
+    networks:
+      kafka-net:
+        aliases:
+          - ksql-server
+      traefik-net:
+    healthcheck:
+      test: curl -X GET http://localhost:${KSQL_PORT}
+      interval: 30s
+      timeout: 30s
+      retries: 3
+      start_period: 2m
+    deploy:
+      mode: replicated
+      replicas: 1
+      labels:
+        traefik.frontend.auth.basic.users: ${UI_AUTH}
+        traefik.frontend.rule: Host:ksql.${PUBLIC_HOSTNAME}
+        traefik.backend: ksql-server
+        traefik.port: "${KSQL_PORT}"
+      restart_policy:
+        delay: 30s
+        window: 2m
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
+        reservations:
+          memory: 820M
+
+networks:
+  kafka-net:
+    name: ${KAFKA_NET_NAME:-kafka-net}
+    external: true
+
+  traefik-net:
+    name: ${TRAEFIK_NET_NAME:-traefik-net}
+    external: true
