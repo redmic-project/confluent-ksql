@@ -9,7 +9,7 @@ services:
       KSQL_BOOTSTRAP_SERVERS: kf-1:${KF_PORT},kf-2:${KF_PORT},kf-3:${KF_PORT}
       KSQL_LISTENERS: http://0.0.0.0:${KSQL_PORT}
       KSQL_KSQL_SCHEMA_REGISTRY_URL: http://schema-registry:${SR_PORT}
-      KSQL_STREAMS_AUTO_OFFSET_RESET: earliest
+      KSQL_AUTO_OFFSET_RESET: earliest
       KSQL_OPTS: -Xmx512m -Xms256m
     networks:
       kafka-net:
@@ -17,7 +17,7 @@ services:
           - ksql-server
       traefik-net:
     healthcheck:
-      test: curl -X GET http://localhost:${KSQL_PORT}
+      test: curl --silent http://localhost:${KSQL_PORT}
       interval: 30s
       timeout: 30s
       retries: 3
