@@ -1,0 +1,28 @@
+version: '3.5'
+
+services:
+  ksql-client:
+    image: confluentinc/cp-ksql-cli:${IMAGE_TAG:-latest}
+    environment:
+      KSQL_KSQL_SERVICE_ID: ksql-client
+      KSQL_BOOTSTRAP_SERVERS: kf-1:${KF_PORT},kf-2:${KF_PORT},kf-3:${KF_PORT}
+      KSQL_LISTENERS: http://0.0.0.0:${KSQL_PORT}
+    networks:
+      - kafka-net
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        delay: 30s
+        window: 2m
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 128M
+        reservations:
+          memory: 103M
+
+networks:
+  kafka-net:
+    name: ${KAFKA_NET_NAME:-kafka-net}
+    external: true

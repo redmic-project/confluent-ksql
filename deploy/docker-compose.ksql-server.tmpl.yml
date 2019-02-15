@@ -12,9 +12,7 @@ services:
       KSQL_AUTO_OFFSET_RESET: earliest
       KSQL_OPTS: -Xmx512m -Xms256m
     networks:
-      kafka-net:
-        aliases:
-          - ksql-server
+      - kafka-net
     healthcheck:
       test: curl --silent http://localhost:${KSQL_PORT}
       interval: 30s

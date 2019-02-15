@@ -1,7 +1,7 @@
 stages:
   - deploy
 
-image: registry.gitlab.com/redmic-project/docker/docker-deploy:latest
+image: ${DOCKER_DEPLOY_IMAGE_NAME}:${DOCKER_DEPLOY_IMAGE_TAG}
 
 services:
   - docker:dind
@@ -9,22 +9,18 @@ services:
 variables:
   DOCKER_DRIVER: overlay2
   STACK: confluent
-  SERVICES_TO_CHECK: confluent_${CI_PROJECT_NAME}
 
 deploy-ksql-server-supporting-branch-develop:
   stage: deploy
   variables:
     SSH_REMOTE: ${DEV_SSH_REMOTE}
+    SERVICES_TO_CHECK: confluent_ksql-server
     IMAGE_TAG: ${DEV_CONFLUENT_VERSION}
-    COMPOSE_FILE: docker-compose.tmpl.yml:docker-compose.dev.yml
-    PUBLIC_HOSTNAME: ${DEV_PUBLIC_HOSTNAME}
-    UI_AUTH: ${DEV_UI_AUTH}
+    COMPOSE_FILE: docker-compose.ksql-server.tmpl.yml:docker-compose.ksql-server.dev.yml
   script:
-    - >
-      deploy.sh IMAGE_TAG=${IMAGE_TAG} COMPOSE_FILE=${COMPOSE_FILE} PUBLIC_HOSTNAME=${PUBLIC_HOSTNAME}
-      UI_AUTH=${UI_AUTH}
+    - deploy.sh IMAGE_TAG=${IMAGE_TAG} COMPOSE_FILE=${COMPOSE_FILE}
   environment:
-    name: dev/${CI_PROJECT_NAME}
+    name: dev/ksql-server
   only:
     - branches
   except:
@@ -35,16 +31,13 @@ deploy-ksql-server-stable-branch-develop:
   stage: deploy
   variables:
     SSH_REMOTE: ${DEV_SSH_REMOTE}
+    SERVICES_TO_CHECK: confluent_ksql-server
     IMAGE_TAG: ${DEV_CONFLUENT_VERSION}
-    COMPOSE_FILE: docker-compose.tmpl.yml:docker-compose.dev.yml
-    PUBLIC_HOSTNAME: ${DEV_PUBLIC_HOSTNAME}
-    UI_AUTH: ${DEV_UI_AUTH}
+    COMPOSE_FILE: docker-compose.ksql-server.tmpl.yml:docker-compose.ksql-server.dev.yml
   script:
-    - >
-      deploy.sh IMAGE_TAG=${IMAGE_TAG} COMPOSE_FILE=${COMPOSE_FILE} PUBLIC_HOSTNAME=${PUBLIC_HOSTNAME}
-      UI_AUTH=${UI_AUTH}
+    - deploy.sh IMAGE_TAG=${IMAGE_TAG} COMPOSE_FILE=${COMPOSE_FILE}
   environment:
-    name: dev/${CI_PROJECT_NAME}
+    name: dev/ksql-server
   only:
     - master
   when: manual
@@ -53,16 +46,13 @@ deploy-ksql-server-supporting-branch-production:
   stage: deploy
   variables:
     SSH_REMOTE: ${PRO_SSH_REMOTE}
+    SERVICES_TO_CHECK: confluent_ksql-server
     IMAGE_TAG: ${PRO_CONFLUENT_VERSION}
-    COMPOSE_FILE: docker-compose.tmpl.yml:docker-compose.prod.yml
-    PUBLIC_HOSTNAME: ${PRO_PUBLIC_HOSTNAME}
-    UI_AUTH: ${PRO_UI_AUTH}
+    COMPOSE_FILE: docker-compose.ksql-server.tmpl.yml:docker-compose.ksql-server.prod.yml
   script:
-    - >
-      deploy.sh IMAGE_TAG=${IMAGE_TAG} COMPOSE_FILE=${COMPOSE_FILE} PUBLIC_HOSTNAME=${PUBLIC_HOSTNAME}
-      UI_AUTH=${UI_AUTH}
+    - deploy.sh IMAGE_TAG=${IMAGE_TAG} COMPOSE_FILE=${COMPOSE_FILE}
   environment:
-    name: pro/${CI_PROJECT_NAME}
+    name: pro/ksql-server
   only:
     - branches
   except:
@@ -73,16 +63,77 @@ deploy-ksql-server-stable-branch-production:
   stage: deploy
   variables:
     SSH_REMOTE: ${PRO_SSH_REMOTE}
+    SERVICES_TO_CHECK: confluent_ksql-server
     IMAGE_TAG: ${PRO_CONFLUENT_VERSION}
-    COMPOSE_FILE: docker-compose.tmpl.yml:docker-compose.prod.yml
-    PUBLIC_HOSTNAME: ${PRO_PUBLIC_HOSTNAME}
-    UI_AUTH: ${PRO_UI_AUTH}
+    COMPOSE_FILE: docker-compose.ksql-server.tmpl.yml:docker-compose.ksql-server.prod.yml
   script:
-    - >
-      deploy.sh IMAGE_TAG=${IMAGE_TAG} COMPOSE_FILE=${COMPOSE_FILE} PUBLIC_HOSTNAME=${PUBLIC_HOSTNAME}
-      UI_AUTH=${UI_AUTH}
+    - deploy.sh IMAGE_TAG=${IMAGE_TAG} COMPOSE_FILE=${COMPOSE_FILE}
   environment:
-    name: pro/${CI_PROJECT_NAME}
+    name: pro/ksql-server
+  only:
+    - master
+  when: manual
+
+deploy-ksql-client-supporting-branch-develop:
+  stage: deploy
+  variables:
+    SSH_REMOTE: ${DEV_SSH_REMOTE}
+    SERVICES_TO_CHECK: confluent_ksql-client
+    IMAGE_TAG: ${DEV_CONFLUENT_VERSION}
+    COMPOSE_FILE: docker-compose.ksql-client.tmpl.yml:docker-compose.ksql-client.dev.yml
+  script:
+    - deploy.sh IMAGE_TAG=${IMAGE_TAG} COMPOSE_FILE=${COMPOSE_FILE}
+  environment:
+    name: dev/ksql-client
+  only:
+    - branches
+  except:
+    - master
+  when: manual
+
+deploy-ksql-client-stable-branch-develop:
+  stage: deploy
+  variables:
+    SSH_REMOTE: ${DEV_SSH_REMOTE}
+    SERVICES_TO_CHECK: confluent_ksql-client
+    IMAGE_TAG: ${DEV_CONFLUENT_VERSION}
+    COMPOSE_FILE: docker-compose.ksql-client.tmpl.yml:docker-compose.ksql-client.dev.yml
+  script:
+    - deploy.sh IMAGE_TAG=${IMAGE_TAG} COMPOSE_FILE=${COMPOSE_FILE}
+  environment:
+    name: dev/ksql-client
+  only:
+    - master
+  when: manual
+
+deploy-ksql-client-supporting-branch-production:
+  stage: deploy
+  variables:
+    SSH_REMOTE: ${PRO_SSH_REMOTE}
+    SERVICES_TO_CHECK: confluent_ksql-client
+    IMAGE_TAG: ${PRO_CONFLUENT_VERSION}
+    COMPOSE_FILE: docker-compose.ksql-client.tmpl.yml:docker-compose.ksql-client.prod.yml
+  script:
+    - deploy.sh IMAGE_TAG=${IMAGE_TAG} COMPOSE_FILE=${COMPOSE_FILE}
+  environment:
+    name: pro/ksql-client
+  only:
+    - branches
+  except:
+    - master
+  when: manual
+
+deploy-ksql-client-stable-branch-production:
+  stage: deploy
+  variables:
+    SSH_REMOTE: ${PRO_SSH_REMOTE}
+    SERVICES_TO_CHECK: confluent_ksql-client
+    IMAGE_TAG: ${PRO_CONFLUENT_VERSION}
+    COMPOSE_FILE: docker-compose.ksql-client.tmpl.yml:docker-compose.ksql-client.prod.yml
+  script:
+    - deploy.sh IMAGE_TAG=${IMAGE_TAG} COMPOSE_FILE=${COMPOSE_FILE}
+  environment:
+    name: pro/ksql-client
   only:
     - master
   when: manual
