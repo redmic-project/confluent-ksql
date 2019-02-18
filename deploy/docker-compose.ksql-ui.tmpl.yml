@@ -1,0 +1,36 @@
+version: '3.5'
+
+services:
+  ksql-ui:
+    image: ${IMAGE_NAME:-matsumana/tsujun}:${IMAGE_TAG:-latest}
+    environment:
+      KSQL_SERVER: http://ksql-server:${KSQL_PORT}
+    networks:
+      - kafka-net
+      - traefik-net
+    deploy:
+      mode: replicated
+      replicas: 1
+      labels:
+        traefik.frontend.auth.basic.users: ${UI_AUTH}
+        traefik.frontend.rule: Host:ksql.${PUBLIC_HOSTNAME}
+        traefik.backend: ksql-ui
+        traefik.port: "${KSQL_UI_PORT:-8080}"
+      restart_policy:
+        delay: 30s
+        window: 2m
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 128M
+        reservations:
+          memory: 103M
+
+networks:
+  kafka-net:
+    name: ${KAFKA_NET_NAME:-kafka-net}
+    external: true
+
+  traefik-net:
+    name: ${TRAEFIK_NET_NAME:-traefik-net}
+    external: true
