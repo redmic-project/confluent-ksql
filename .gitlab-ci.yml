@@ -9,6 +9,7 @@ services:
 variables:
   DOCKER_DRIVER: overlay2
   STACK: confluent
+  KSQL_UI_IMAGE_TAG: latest
 
 deploy-ksql-server-supporting-branch-develop:
   stage: deploy
@@ -79,7 +80,7 @@ deploy-ksql-ui-supporting-branch-develop:
   variables:
     SSH_REMOTE: ${DEV_SSH_REMOTE}
     SERVICES_TO_CHECK: confluent_ksql-ui
-    IMAGE_TAG: ${DEV_CONFLUENT_VERSION}
+    IMAGE_TAG: ${KSQL_UI_IMAGE_TAG}
     COMPOSE_FILE: docker-compose.ksql-ui.tmpl.yml:docker-compose.ksql-ui.dev.yml
     PUBLIC_HOSTNAME: ${DEV_PUBLIC_HOSTNAME}
     UI_AUTH: ${DEV_UI_AUTH}
@@ -100,7 +101,7 @@ deploy-ksql-ui-stable-branch-develop:
   variables:
     SSH_REMOTE: ${DEV_SSH_REMOTE}
     SERVICES_TO_CHECK: confluent_ksql-ui
-    IMAGE_TAG: ${DEV_CONFLUENT_VERSION}
+    IMAGE_TAG: ${KSQL_UI_IMAGE_TAG}
     COMPOSE_FILE: docker-compose.ksql-ui.tmpl.yml:docker-compose.ksql-ui.dev.yml
     PUBLIC_HOSTNAME: ${DEV_PUBLIC_HOSTNAME}
     UI_AUTH: ${DEV_UI_AUTH}
@@ -119,7 +120,7 @@ deploy-ksql-ui-supporting-branch-production:
   variables:
     SSH_REMOTE: ${PRO_SSH_REMOTE}
     SERVICES_TO_CHECK: confluent_ksql-ui
-    IMAGE_TAG: ${PRO_CONFLUENT_VERSION}
+    IMAGE_TAG: ${KSQL_UI_IMAGE_TAG}
     COMPOSE_FILE: docker-compose.ksql-ui.tmpl.yml:docker-compose.ksql-ui.prod.yml
     PUBLIC_HOSTNAME: ${DEV_PUBLIC_HOSTNAME}
     UI_AUTH: ${DEV_UI_AUTH}
@@ -140,7 +141,7 @@ deploy-ksql-ui-stable-branch-production:
   variables:
     SSH_REMOTE: ${PRO_SSH_REMOTE}
     SERVICES_TO_CHECK: confluent_ksql-ui
-    IMAGE_TAG: ${PRO_CONFLUENT_VERSION}
+    IMAGE_TAG: ${KSQL_UI_IMAGE_TAG}
     COMPOSE_FILE: docker-compose.ksql-ui.tmpl.yml:docker-compose.ksql-ui.prod.yml
     PUBLIC_HOSTNAME: ${DEV_PUBLIC_HOSTNAME}
     UI_AUTH: ${DEV_UI_AUTH}
