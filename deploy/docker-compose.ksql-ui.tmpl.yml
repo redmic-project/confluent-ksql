@@ -22,9 +22,9 @@ services:
       resources:
         limits:
           cpus: '0.5'
-          memory: 128M
+          memory: 256M
         reservations:
-          memory: 103M
+          memory: 205M
 
 networks:
   kafka-net:
