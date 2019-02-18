@@ -9,7 +9,7 @@ services:
 variables:
   DOCKER_DRIVER: overlay2
   STACK: confluent
-  KSQL_UI_IMAGE_TAG: latest
+  KSQL_UI_IMAGE_TAG: 0.0.1
 
 deploy-ksql-server-supporting-branch-develop:
   stage: deploy
