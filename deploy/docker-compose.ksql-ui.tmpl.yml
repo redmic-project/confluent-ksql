@@ -8,6 +8,12 @@ services:
     networks:
       - kafka-net
       - traefik-net
+    healthcheck:
+      test: curl --silent --output /dev/null http://localhost:${KSQL_UI_PORT}
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 2m
     deploy:
       mode: replicated
       replicas: 1
@@ -15,7 +21,7 @@ services:
         traefik.frontend.auth.basic.users: ${UI_AUTH}
         traefik.frontend.rule: Host:ksql.${PUBLIC_HOSTNAME}
         traefik.backend: ksql-ui
-        traefik.port: "${KSQL_UI_PORT:-8080}"
+        traefik.port: "${KSQL_UI_PORT}"
       restart_policy:
         delay: 30s
         window: 2m
