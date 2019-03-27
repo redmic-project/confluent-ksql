@@ -122,8 +122,8 @@ deploy-ksql-ui-supporting-branch-production:
     SERVICES_TO_CHECK: confluent_ksql-ui
     IMAGE_TAG: ${KSQL_UI_IMAGE_TAG}
     COMPOSE_FILE: docker-compose.ksql-ui.tmpl.yml:docker-compose.ksql-ui.prod.yml
-    PUBLIC_HOSTNAME: ${DEV_PUBLIC_HOSTNAME}
-    UI_AUTH: ${DEV_UI_AUTH}
+    PUBLIC_HOSTNAME: ${PRO_PUBLIC_HOSTNAME}
+    UI_AUTH: ${PRO_UI_AUTH}
   script:
      - >
       deploy.sh IMAGE_TAG=${IMAGE_TAG} COMPOSE_FILE=${COMPOSE_FILE} PUBLIC_HOSTNAME=${PUBLIC_HOSTNAME}
@@ -143,8 +143,8 @@ deploy-ksql-ui-stable-branch-production:
     SERVICES_TO_CHECK: confluent_ksql-ui
     IMAGE_TAG: ${KSQL_UI_IMAGE_TAG}
     COMPOSE_FILE: docker-compose.ksql-ui.tmpl.yml:docker-compose.ksql-ui.prod.yml
-    PUBLIC_HOSTNAME: ${DEV_PUBLIC_HOSTNAME}
-    UI_AUTH: ${DEV_UI_AUTH}
+    PUBLIC_HOSTNAME: ${PRO_PUBLIC_HOSTNAME}
+    UI_AUTH: ${PRO_UI_AUTH}
   script:
      - >
       deploy.sh IMAGE_TAG=${IMAGE_TAG} COMPOSE_FILE=${COMPOSE_FILE} PUBLIC_HOSTNAME=${PUBLIC_HOSTNAME}
