@@ -33,7 +33,7 @@ services:
           memory: ${KSQL_SERVER_RESOURCES_RESERVATIONS_MEMORY:-820M}
 
   ksql-ui:
-    image: ${KSQL_UI_IMAGE_NAME:-matsumana/tsujun}:${KSQL_UI_MAGE_TAG:-latest}
+    image: ${KSQL_UI_IMAGE_NAME:-matsumana/tsujun}:${KSQL_UI_IMAGE_TAG:-latest}
     environment:
       KSQL_SERVER: http://${KSQL_SERVER_HOSTNAME}:${KSQL_SERVER_PORT}
     networks:
