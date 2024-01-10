@@ -27,10 +27,10 @@ services:
       resources:
         limits:
           cpus: '${KSQL_SERVER_RESOURCES_LIMITS_CPUS:-1}'
-          memory: ${KSQL_SERVER_RESOURCES_LIMITS_MEMORY:-1G}
+          memory: ${KSQL_SERVER_RESOURCES_LIMITS_MEMORY:-700M}
         reservations:
           cpus: '${KSQL_SERVER_RESOURCES_RESERVATIONS_CPUS:-0.001}'
-          memory: ${KSQL_SERVER_RESOURCES_RESERVATIONS_MEMORY:-820M}
+          memory: ${KSQL_SERVER_RESOURCES_RESERVATIONS_MEMORY:-512M}
 
   ksql-ui:
     image: ${KSQL_UI_IMAGE_NAME:-matsumana/tsujun}:${KSQL_UI_IMAGE_TAG:-latest}
@@ -61,11 +61,11 @@ services:
         traefik.http.services.ksql-ui.loadbalancer.server.port: ${KSQL_UI_PORT}
       resources:
         limits:
-          cpus: '${KSQL_UI_RESOURCES_LIMITS_CPUS:-0.5}'
-          memory: ${KSQL_UI_RESOURCES_LIMITS_MEMORY:-256M}
+          cpus: '${KSQL_UI_RESOURCES_LIMITS_CPUS:-1}'
+          memory: ${KSQL_UI_RESOURCES_LIMITS_MEMORY:-640M}
         reservations:
           cpus: '${KSQL_UI_RESOURCES_RESERVATIONS_CPUS:-0.001}'
-          memory: ${KSQL_UI_RESOURCES_RESERVATIONS_MEMORY:-205M}
+          memory: ${KSQL_UI_RESOURCES_RESERVATIONS_MEMORY:-512M}
 
 networks:
   kafka-net:
