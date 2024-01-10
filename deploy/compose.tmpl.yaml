@@ -1,0 +1,79 @@
+services:
+  ksql-server:
+    image: ${KSQL_SERVER_IMAGE_NAME:-confluentinc/cp-ksql-server}:${KSQL_SERVER_IMAGE_TAG:-latest}
+    hostname: ${KSQL_SERVER_HOSTNAME}
+    environment:
+      KSQL_KSQL_SERVICE_ID:
+      KSQL_BOOTSTRAP_SERVERS:
+      KSQL_LISTENERS: http://0.0.0.0:${KSQL_SERVER_PORT}
+      KSQL_KSQL_SCHEMA_REGISTRY_URL:
+      KSQL_AUTO_OFFSET_RESET:
+      KSQL_OPTS:
+    networks:
+      kafka-net:
+    healthcheck:
+      test: curl --silent http://localhost:${KSQL_SERVER_PORT}
+      interval: ${KSQL_SERVER_HEALTHCHECK_INTERVAL:-30s}
+      timeout: ${KSQL_SERVER_HEALTHCHECK_TIMEOUT:-10s}
+      retries: ${KSQL_SERVER_HEALTHCHECK_RETRIES:-5}
+      start_period: ${KSQL_SERVER_HEALTHCHECK_START_PERIOD:-2m}
+    deploy:
+      mode: replicated
+      replicas: ${KSQL_SERVER_REPLICAS:-1}
+      restart_policy:
+        delay: ${KSQL_SERVER_RESTART_DELAY:-30s}
+      update_config:
+        delay: ${KSQL_SERVER_UPDATE_DELAY:-1m}
+      resources:
+        limits:
+          cpus: '${KSQL_SERVER_RESOURCES_LIMITS_CPUS:-1}'
+          memory: ${KSQL_SERVER_RESOURCES_LIMITS_MEMORY:-700M}
+        reservations:
+          cpus: '${KSQL_SERVER_RESOURCES_RESERVATIONS_CPUS:-0.001}'
+          memory: ${KSQL_SERVER_RESOURCES_RESERVATIONS_MEMORY:-512M}
+
+  ksql-ui:
+    image: ${KSQL_UI_IMAGE_NAME:-matsumana/tsujun}:${KSQL_UI_IMAGE_TAG:-latest}
+    environment:
+      KSQL_SERVER: http://${KSQL_SERVER_HOSTNAME}:${KSQL_SERVER_PORT}
+    networks:
+      kafka-net:
+      traefik-net:
+    healthcheck:
+      test: curl -s -o /dev/null http://localhost:${KSQL_UI_PORT}
+      interval: ${KSQL_UI_HEALTHCHECK_INTERVAL:-30s}
+      timeout: ${KSQL_UI_HEALTHCHECK_TIMEOUT:-10s}
+      retries: ${KSQL_UI_HEALTHCHECK_RETRIES:-5}
+      start_period: ${KSQL_UI_HEALTHCHECK_START_PERIOD:-1m}
+    deploy:
+      mode: replicated
+      replicas: ${KSQL_UI_REPLICAS:-1}
+      restart_policy:
+        delay: ${KSQL_UI_RESTART_DELAY:-30s}
+      update_config:
+        delay: ${KSQL_UI_UPDATE_DELAY:-1m}
+      labels:
+        traefik.enable: ${TRAEFIK_ENABLE:-true}
+        traefik.http.routers.ksql-ui.entrypoints: ${TRAEFIK_ENTRYPOINT:-http}
+        traefik.http.routers.ksql-ui.rule: Host(`${TRAEFIK_SUBDOMAIN:-ksql}.${PUBLIC_HOSTNAME}`)
+        traefik.http.middlewares.ksql-ui-auth.basicauth.users: ${TRAEFIK_AUTH}
+        traefik.http.routers.ksql-ui.middlewares: ksql-ui-auth
+        traefik.http.services.ksql-ui.loadbalancer.server.port: ${KSQL_UI_PORT}
+      resources:
+        limits:
+          cpus: '${KSQL_UI_RESOURCES_LIMITS_CPUS:-1}'
+          memory: ${KSQL_UI_RESOURCES_LIMITS_MEMORY:-640M}
+        reservations:
+          cpus: '${KSQL_UI_RESOURCES_RESERVATIONS_CPUS:-0.001}'
+          memory: ${KSQL_UI_RESOURCES_RESERVATIONS_MEMORY:-512M}
+
+networks:
+  kafka-net:
+    name: ${KAFKA_NET_NAME:-kafka-net}
+    driver: ${KAFKA_NET_DRIVER:-overlay}
+    external: true
+
+  traefik-net:
+    name: ${TRAEFIK_NET_NAME:-traefik-net}
+    driver: ${TRAEFIK_NET_DRIVER:-overlay}
+    external: true
